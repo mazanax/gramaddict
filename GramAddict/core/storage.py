@@ -115,19 +115,19 @@ class Storage:
         return datetime.now() - stored_time >= limit_time
 
     def _get_user_by_username(self, username: str) -> dict | None:
-        if mongo.count_documents({"username": username}) == 0:
+        if mongo.interacted_users.count_documents({"username": username}) == 0:
             return None
 
-        user = mongo.find_one({"username": username})
+        user = mongo.interacted_users.find_one({"username": username})
         return user
 
     def _save_user_by_username(self, username: str, user_data: dict) -> dict:
         user = self._get_user_by_username(username)
         if not user:
-            mongo.insert_one(user_data)
+            mongo.interacted_users.insert_one(user_data)
             return self._get_user_by_username(username)
 
-        mongo.update_one({"username": username}, {"$set": user_data})
+        mongo.interacted_users.update_one({"username": username}, {"$set": user_data})
         return user_data
 
     def check_user_was_interacted(self, username):

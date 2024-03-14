@@ -27,7 +27,7 @@ FILENAME_MESSAGES = "pm_list.txt"
 
 
 class Storage:
-    def __init__(self, my_username, mongo_uri):
+    def __init__(self, my_username, mongo_uri, worker_id):
         if my_username is None:
             logger.error(
                 "No username, thus the script won't get access to interacted users and sessions data."
@@ -38,11 +38,14 @@ class Storage:
             os.makedirs(self.account_path)
         self.interacted_users = {}
         self.history_filter_users = {}
+        self.worker_id = worker_id
 
         print(f"Mongo URI: {mongo_uri}")
         client = MongoClient(mongo_uri)
         self.mongo = client.gramaddict
-        print(f"Count interacted users = {self.mongo.interacted_users.count_documents({})}")
+
+        worker_id_criteria = {"worker-id": self.worker_id}
+        print(f"Count interacted users = {self.mongo.interacted_users.count_documents(worker_id_criteria)}")
 
         self.interacted_users_path = os.path.join(
             self.account_path, FILENAME_INTERACTED_USERS
@@ -119,10 +122,10 @@ class Storage:
         return datetime.now() - stored_time >= limit_time
 
     def _get_user_by_username(self, username: str) -> dict | None:
-        if self.mongo.interacted_users.count_documents({"username": username}) == 0:
+        if self.mongo.interacted_users.count_documents({"worker-id": self.worker_id, "username": username}) == 0:
             return None
 
-        user = self.mongo.interacted_users.find_one({"username": username})
+        user = self.mongo.interacted_users.find_one({"worker-id": self.worker_id, "username": username})
         return user
 
     def _save_user_by_username(self, username: str, user_data: dict) -> dict:
@@ -131,7 +134,7 @@ class Storage:
             self.mongo.interacted_users.insert_one(user_data)
             return self._get_user_by_username(username)
 
-        self.mongo.interacted_users.update_one({"username": username}, {"$set": user_data})
+        self.mongo.interacted_users.update_one({"worker-id": self.worker_id, "username": username}, {"$set": user_data})
         return user_data
 
     def check_user_was_interacted(self, username):

@@ -18,6 +18,13 @@ class CoreArguments(Plugin):
                 "default": None,
             },
             {
+                "arg": "--worker-id",
+                "nargs": None,
+                "help": "Worker id to allow run multiple bots in parallel",
+                "metavar": "of",
+                "default": "default",
+            },
+            {
                 "arg": "--device",
                 "nargs": None,
                 "help": "device identifier. Should be used only when multiple devices are connected at once",

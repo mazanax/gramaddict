@@ -248,7 +248,7 @@ def start_bot(**kwargs):
         logger.info(
             f"There is/are {len(jobs_list)-len(unfollow_jobs)} active-job(s) and {len(unfollow_jobs)} unfollow-job(s) scheduled for this session."
         )
-        storage = Storage(session_state.my_username)
+        storage = Storage(session_state.my_username, configs.mongo_uri)
         filters = Filter(storage)
         show_ending_conditions()
         if not configs.args.debug:

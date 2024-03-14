@@ -31,6 +31,7 @@ class Config:
         self.app_id: Optional[str] = None
         self.first_run = first_run
         self.username = False
+        self.mongo_uri = ''
 
         # Pre-Load Variables Needed for Script Init
         if self.module:
@@ -70,6 +71,7 @@ class Config:
                 )
                 exit(2)
 
+            self.mongo_uri = self.config.get("mongo_uri", 'mongodb://localhost:27017/')
             self.username = self.config.get("username", False)
             self.debug = self.config.get("debug", False)
             self.app_id = self.config.get("app_id", "com.instagram.android")

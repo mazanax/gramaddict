@@ -138,6 +138,10 @@ class Storage:
         return user_data
 
     def check_user_was_interacted(self, username):
+        if self.mongo.interaction_locks.count_documents({"worker-id": self.worker_id, "username": username}) == 0:
+            self.mongo.interaction_locks.insert_one({"worker-id": self.worker_id, "username": username})
+            return False, None
+
         user = self._get_user_by_username(username)
         if user is None:
             return False, None

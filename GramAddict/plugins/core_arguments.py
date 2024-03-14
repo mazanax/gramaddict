@@ -11,6 +11,13 @@ class CoreArguments(Plugin):
         self.description = "Simply adds core arguments"
         self.arguments = [
             {
+                "arg": "--mongo-uri",
+                "nargs": None,
+                "help": "Mongo URI",
+                "metavar": "mongodb://127.0.0.1:27017/",
+                "default": None,
+            },
+            {
                 "arg": "--device",
                 "nargs": None,
                 "help": "device identifier. Should be used only when multiple devices are connected at once",

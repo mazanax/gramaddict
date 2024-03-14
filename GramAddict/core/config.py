@@ -176,8 +176,8 @@ class Config:
             self.args, self.unknown_args = self.parser.parse_known_args()
         if "run" in self.unknown_args:
             self.unknown_args.remove("run")
-        if "mongo-uri" in self.unknown_args:
-            self.unknown_args.remove("mongo-uri")
+        if "--mongo-uri" in self.unknown_args:
+            self.unknown_args.remove("--mongo-uri")
         if self.unknown_args and self.first_run:
             logger.error(
                 "Unknown arguments: " + ", ".join(str(arg) for arg in self.unknown_args)

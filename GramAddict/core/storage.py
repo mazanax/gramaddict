@@ -8,6 +8,8 @@ from typing import Optional, Union
 
 from atomicwrites import atomic_write
 
+from .mongo import mongo
+
 logger = logging.getLogger(__name__)
 
 ACCOUNTS = "accounts"
@@ -112,9 +114,24 @@ class Storage:
             return True
         return datetime.now() - stored_time >= limit_time
 
+    def _get_user_by_username(self, username: str) -> dict | None:
+        if mongo.count_documents({"username": username}) == 0:
+            return None
+
+        user = mongo.find_one({"username": username})
+        return user
+
+    def _save_user_by_username(self, username: str, user_data: dict) -> dict:
+        user = self._get_user_by_username(username)
+        if not user:
+            mongo.insert_one(user_data)
+            return self._get_user_by_username(username)
+
+        mongo.update_one({"username": username}, {"$set": user_data})
+        return user_data
+
     def check_user_was_interacted(self, username):
-        """returns when a username has been interacted, False if not already interacted"""
-        user = self.interacted_users.get(username)
+        user = self._get_user_by_username(username)
         if user is None:
             return False, None
 
@@ -124,7 +141,7 @@ class Storage:
         return True, last_interaction
 
     def get_following_status(self, username):
-        user = self.interacted_users.get(username)
+        user = self._get_user_by_username(username)
         if user is None:
             return FollowingStatus.NOT_IN_LIST
         else:
@@ -160,7 +177,7 @@ class Storage:
         job_name=None,
         target=None,
     ):
-        user = self.interacted_users.get(username, {})
+        user = self._get_user_by_username(username) or {}
         user[USER_LAST_INTERACTION] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
         if followed:
@@ -216,6 +233,7 @@ class Storage:
             else user["pm_sent"]
         )
         self.interacted_users[username] = user
+        self._save_user_by_username(username, user)
         self._update_file()
 
     def is_user_in_whitelist(self, username):

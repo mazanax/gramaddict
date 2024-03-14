@@ -176,6 +176,8 @@ class Config:
             self.args, self.unknown_args = self.parser.parse_known_args()
         if "run" in self.unknown_args:
             self.unknown_args.remove("run")
+        if "mongo-uri" in self.unknown_args:
+            self.unknown_args.remove("mongo-uri")
         if self.unknown_args and self.first_run:
             logger.error(
                 "Unknown arguments: " + ", ".join(str(arg) for arg in self.unknown_args)
@@ -189,6 +191,7 @@ class Config:
                     break
             exit(0)
         self.device_id = self.args.device
+        self.mongo_uri = self.args.mongo_uri
         # We need to maintain the order of plugins as defined
         # in config or sys.argv
         if self.config_list:

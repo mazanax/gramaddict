@@ -234,7 +234,6 @@ class Storage:
         )
         self.interacted_users[username] = user
         self._save_user_by_username(username, user)
-        self._update_file()
 
     def is_user_in_whitelist(self, username):
         return username in self.whitelist

@@ -131,7 +131,7 @@ class Storage:
     def _save_user_by_username(self, username: str, user_data: dict) -> dict:
         user = self._get_user_by_username(username)
         if not user:
-            self.mongo.interacted_users.insert_one(user_data)
+            self.mongo.interacted_users.insert_one({"worker-id": self.worker_id, "username": username, **user_data})
             return self._get_user_by_username(username)
 
         self.mongo.interacted_users.update_one({"worker-id": self.worker_id, "username": username}, {"$set": user_data})

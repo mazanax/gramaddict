@@ -11,6 +11,13 @@ class CoreArguments(Plugin):
         self.description = "Simply adds core arguments"
         self.arguments = [
             {
+                "arg": "--pm-filename",
+                "nargs": None,
+                "help": "PM list filename",
+                "metavar": "pm_list.txt",
+                "default": None,
+            },
+            {
                 "arg": "--mongo-uri",
                 "nargs": None,
                 "help": "Mongo URI",

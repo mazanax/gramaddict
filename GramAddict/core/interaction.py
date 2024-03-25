@@ -731,7 +731,7 @@ def _send_PM(
     )
 
     if message_box.exists():
-        message = load_random_message(my_username)
+        message = load_random_message(my_username, args.pm_filename)
         if message is None:
             logger.warning(
                 "If you don't want to comment set 'pm-percentage: 0' in your config.yml."
@@ -807,8 +807,8 @@ def _load_and_clean_txt_file(
     return None
 
 
-def load_random_message(my_username: str) -> Optional[str]:
-    lines = _load_and_clean_txt_file(my_username, storage.FILENAME_MESSAGES)
+def load_random_message(my_username: str, messages_filename: Optional[str] = None) -> Optional[str]:
+    lines = _load_and_clean_txt_file(my_username, messages_filename or storage.FILENAME_MESSAGES)
     if lines is not None:
         random_message = choice(lines)
         return emoji.emojize(

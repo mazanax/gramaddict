@@ -1806,7 +1806,7 @@ class ProfileView(ActionBarView):
         element_to_swipe_over_obj = self.device.find(
             resourceIdMatches=ResourceID.PROFILE_TABS_CONTAINER
         )
-        for _ in range(2):
+        for _ in range(3):
             if not element_to_swipe_over_obj.exists():
                 UniversalActions(self.device)._swipe_points(
                     direction=Direction.DOWN, delta_y=randint(300, 350)
